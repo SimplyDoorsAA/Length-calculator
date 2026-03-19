@@ -3,19 +3,30 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <meta name="description" content="SimplyDoors Measurement Calculator - Quick conversions and divisions for feet and inches.">
     <title>SimplyDoors Measurement Calculator</title>
+    
+    <meta name="theme-color" content="#0f172a">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <meta name="apple-mobile-web-app-title" content="SD Calc">
+    
+    <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Crect width='100' height='100' rx='20' fill='%230f172a'/%3E%3Ctext x='50' y='65' font-family='Arial' font-size='50' font-weight='bold' fill='%23059669' text-anchor='middle'%3ESD%3C/text%3E%3C/svg%3E">
+    
+    <link rel="manifest" id="manifest-placeholder">
+
     <style>
         :root {
-            --brand-dark: #0f172a;      /* Slate 900 */
-            --brand-primary: #059669;   /* SimplyDoors Green (Emerald 600) */
-            --brand-accent: #10b981;    /* Lighter Green Accent (Emerald 500) */
-            --bg-page: #f8fafc;         /* Slate 50 */
+            --brand-dark: #0f172a;      
+            --brand-primary: #059669;   
+            --brand-accent: #10b981;    
+            --bg-page: #f8fafc;         
             --bg-card: #ffffff;
-            --text-main: #334155;       /* Slate 700 */
-            --text-muted: #64748b;      /* Slate 500 */
-            --border-color: #e2e8f0;    /* Slate 200 */
+            --text-main: #334155;       
+            --text-muted: #64748b;      
+            --border-color: #e2e8f0;    
             --input-bg: #ffffff;
-            --input-readonly: #f1f5f9;  /* Slate 100 */
+            --input-readonly: #f1f5f9;  
         }
 
         body {
@@ -28,6 +39,7 @@
             flex-direction: column;
             align-items: center;
             min-height: 100vh;
+            -webkit-tap-highlight-color: transparent;
         }
 
         /* --- Branding Header --- */
@@ -44,21 +56,45 @@
             box-shadow: 0 2px 4px rgba(0,0,0,0.1);
         }
 
+        .logo-container {
+            display: flex;
+            flex-direction: column;
+        }
+
         .logo {
-            font-size: 1.5rem;
+            font-size: 1.4rem;
             font-weight: 800;
             letter-spacing: -0.5px;
+            line-height: 1;
         }
 
         .logo-simply { color: #ffffff; }
         .logo-doors { color: var(--brand-accent); }
         
         .header-title {
-            font-size: 0.9rem;
-            font-weight: 500;
+            font-size: 0.75rem;
+            font-weight: 600;
             color: #cbd5e1;
             text-transform: uppercase;
-            letter-spacing: 0.5px;
+            letter-spacing: 1px;
+            margin-top: 4px;
+        }
+
+        .install-btn {
+            background-color: var(--brand-primary);
+            color: white;
+            border: none;
+            padding: 8px 12px;
+            border-radius: 6px;
+            font-size: 0.85rem;
+            font-weight: 600;
+            cursor: pointer;
+            display: none; 
+            transition: background-color 0.2s;
+        }
+
+        .install-btn:active, .install-btn:hover {
+            background-color: #047857;
         }
 
         /* --- Main Calculator Card --- */
@@ -66,11 +102,12 @@
             width: 100%;
             max-width: 600px;
             background-color: var(--bg-card);
-            margin-top: 30px;
+            margin-top: 20px;
             border-radius: 12px;
-            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+            box-shadow: 0 4px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -4px rgba(0, 0, 0, 0.05);
             border: 1px solid var(--border-color);
             overflow: hidden;
+            margin-bottom: 40px;
         }
 
         /* --- Grid Layout for Rows --- */
@@ -94,12 +131,12 @@
 
         .left-half {
             border-right: 1px solid var(--border-color);
-            background-color: #fafaf9; /* Very subtle difference for the left side */
+            background-color: #fafaf9; 
         }
 
         /* Divider Row (Middle) */
         .divide-row {
-            grid-column: 1 / -1; /* Spans both columns */
+            grid-column: 1 / -1; 
             background-color: var(--brand-dark);
             color: white;
             padding: 20px;
@@ -134,6 +171,7 @@
         .input-group {
             display: flex;
             flex-direction: column;
+            flex: 1;
         }
 
         .input-wrapper {
@@ -150,14 +188,13 @@
             font-size: 1.75rem;
             font-weight: 600;
             text-align: right;
-            padding: 8px 35px 8px 12px; /* Extra right padding for the unit */
+            padding: 8px 35px 8px 12px; 
             width: 100%;
             box-sizing: border-box;
             outline: none;
             transition: all 0.2s ease;
         }
 
-        /* Focus ring uses the new green */
         input[type="number"]:focus {
             border-color: var(--brand-primary);
             box-shadow: 0 0 0 3px rgba(5, 150, 105, 0.15); 
@@ -170,7 +207,6 @@
             cursor: default;
         }
 
-        /* Hide the default number spinners/arrows */
         input[type="number"]::-webkit-inner-spin-button,
         input[type="number"]::-webkit-outer-spin-button {
             -webkit-appearance: none;
@@ -180,17 +216,15 @@
             -moz-appearance: textfield;
         }
 
-        /* Internal Unit Labels (ft, in) */
         .unit-inline {
             position: absolute;
             right: 12px;
             font-size: 1rem;
             font-weight: 600;
             color: var(--text-muted);
-            pointer-events: none; /* Let clicks pass through to the input */
+            pointer-events: none; 
         }
 
-        /* Divide Input Specifics */
         .divide-input {
             width: 120px !important;
             border-color: transparent !important;
@@ -203,16 +237,34 @@
             box-shadow: 0 0 0 3px rgba(255, 255, 255, 0.1) !important;
         }
 
-        /* Total Values (Right Column) */
+        .total-number-input {
+            font-size: 2.2rem !important; 
+            color: var(--brand-primary) !important;
+            border-color: transparent !important; 
+            background-color: transparent !important;
+            padding-right: 30px !important; 
+        }
+
+        .total-number-input:hover {
+            border-color: var(--border-color) !important;
+            background-color: var(--input-bg) !important;
+        }
+
+        .total-number-input:focus {
+            border-color: var(--brand-primary) !important;
+            background-color: var(--input-bg) !important;
+        }
+
         .total-value-container {
             display: flex;
             align-items: baseline;
             justify-content: flex-end;
             gap: 8px;
+            padding-right: 15px; 
         }
 
         .total-number {
-            font-size: 2.5rem;
+            font-size: 2.2rem;
             font-weight: 700;
             color: var(--brand-primary);
             word-break: break-all;
@@ -224,68 +276,135 @@
             color: var(--text-muted);
         }
 
+        /* --- Toolbar actions --- */
+        .toolbar {
+            grid-column: 1 / -1;
+            display: flex;
+            justify-content: space-between;
+            padding: 15px 20px;
+            background-color: #f1f5f9;
+            border-top: 1px solid var(--border-color);
+        }
+
+        .action-btn {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            background: none;
+            border: 1px solid var(--border-color);
+            padding: 10px 16px;
+            border-radius: 8px;
+            font-size: 0.9rem;
+            font-weight: 600;
+            color: var(--text-main);
+            background-color: white;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .action-btn:active, .action-btn:hover {
+            background-color: #e2e8f0;
+        }
+
+        .btn-copy {
+            background-color: var(--brand-primary);
+            color: white;
+            border-color: var(--brand-primary);
+        }
+
+        .btn-copy:active, .btn-copy:hover {
+            background-color: #047857;
+        }
+
+        /* --- Toast Notification --- */
+        .toast {
+            position: fixed;
+            bottom: 20px;
+            left: 50%;
+            transform: translateX(-50%) translateY(100px);
+            background-color: var(--brand-dark);
+            color: white;
+            padding: 12px 24px;
+            border-radius: 50px;
+            font-weight: 600;
+            font-size: 0.9rem;
+            opacity: 0;
+            transition: all 0.3s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+            pointer-events: none;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+            z-index: 1000;
+        }
+
+        .toast.show {
+            transform: translateX(-50%) translateY(0);
+            opacity: 1;
+        }
+
     </style>
 </head>
 <body>
 
     <header class="brand-header">
-        <div class="logo">
-            <span class="logo-simply">Simply</span><span class="logo-doors">Doors</span>
+        <div class="logo-container">
+            <div class="logo">
+                <span class="logo-simply">Simply</span><span class="logo-doors">Doors</span>
+            </div>
+            <div class="header-title">Measurement Calc</div>
         </div>
-        <div class="header-title">Calc Tool</div>
+        <button id="installAppBtn" class="install-btn" aria-label="Install App to Home Screen">Install App</button>
     </header>
 
-    <div class="app-container">
+    <main class="app-container">
         
         <div class="calc-row">
             <div class="section-half left-half">
-                <div class="row-title">Starting Measurement</div>
+                <div class="row-title" id="start-measure-label">Starting Measurement</div>
                 <div class="dual-inputs">
-                    <div class="input-group" style="flex: 1;">
+                    <div class="input-group">
                         <div class="input-wrapper">
-                            <input type="number" id="feetInput" value="6" min="0" step="1">
-                            <span class="unit-inline">ft</span>
+                            <input type="number" id="feetInput" value="6" min="0" step="1" inputmode="decimal" aria-labelledby="start-measure-label" aria-label="Feet">
+                            <span class="unit-inline" aria-hidden="true">ft</span>
                         </div>
                     </div>
-                    <div class="input-group" style="flex: 1;">
+                    <div class="input-group">
                         <div class="input-wrapper">
-                            <input type="number" id="inchesInput" value="3" min="0" max="11" step="any">
-                            <span class="unit-inline">in</span>
+                            <input type="number" id="inchesInput" value="3" min="0" max="11" step="any" inputmode="decimal" aria-labelledby="start-measure-label" aria-label="Inches">
+                            <span class="unit-inline" aria-hidden="true">in</span>
                         </div>
                     </div>
                 </div>
             </div>
             
             <div class="section-half">
-                <div class="row-title">Total Starting Inches</div>
-                <div class="total-value-container">
-                    <div class="total-number" id="totalInchesDisplay">75</div>
-                    <div class="total-unit">in</div>
+                <div class="row-title" id="total-start-label">Total Starting Inches</div>
+                <div class="input-wrapper" style="justify-content: flex-end;">
+                    <input type="number" class="total-number-input" id="totalInchesInput" value="75" min="0" step="any" inputmode="decimal" aria-labelledby="total-start-label">
+                    <span class="unit-inline" style="right: 5px;" aria-hidden="true">in</span>
                 </div>
             </div>
         </div>
 
         <div class="calc-row">
             <div class="divide-row">
-                <div class="divide-label">Divide By</div>
-                <input type="number" class="divide-input" id="divideInput" placeholder="e.g. 2" min="0.1" step="any">
+                <div class="divide-label" id="divide-label">Divide By</div>
+                <input type="number" class="divide-input" id="divideInput" placeholder="e.g. 2" min="0.1" step="any" inputmode="decimal" aria-labelledby="divide-label">
             </div>
         </div>
 
         <div class="calc-row">
             <div class="section-half left-half">
-                <div class="row-title">Divided Result</div>
+                <div class="row-title" id="result-measure-label">Divided Result</div>
                 <div class="dual-inputs">
-                    <div class="input-group" style="flex: 1;">
+                    <div class="input-group">
                         <div class="input-wrapper">
-                            <input type="number" id="resultFeetDisplay" value="0" readonly>
-                            <span class="unit-inline">ft</span>
+                            <input type="number" id="resultFeetDisplay" value="0" readonly aria-labelledby="result-measure-label" aria-label="Resulting Feet">
+                            <span class="unit-inline" aria-hidden="true">ft</span>
                         </div>
                     </div>
-                    <div class="input-group" style="flex: 1;">
+                    <div class="input-group">
                         <div class="input-wrapper">
-                            <input type="number" id="resultInchesDisplay" value="0" readonly>
-                            <span class="unit-inline">in</span>
+                            <input type="number" id="resultInchesDisplay" value="0" readonly aria-labelledby="result-measure-label" aria-label="Resulting Inches">
+                            <span class="unit-inline" aria-hidden="true">in</span>
                         </div>
                     </div>
                 </div>
@@ -294,79 +413,240 @@
             <div class="section-half">
                 <div class="row-title">Divided Total Inches</div>
                 <div class="total-value-container">
-                    <div class="total-number" id="dividedTotalInchesDisplay">0</div>
-                    <div class="total-unit">in</div>
+                    <div class="total-number" id="dividedTotalInchesDisplay" aria-live="polite">0</div>
+                    <div class="total-unit" aria-hidden="true">in</div>
                 </div>
             </div>
         </div>
 
-    </div>
+        <div class="toolbar">
+            <button class="action-btn" id="clearBtn" aria-label="Clear all inputs">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 6h18"></path><path d="M19 6v14c0 1-1 2-2 2H7c-1 0-2-1-2-2V6"></path><path d="M8 6V4c0-1 1-2 2-2h4c1 0 2 1 2 2v2"></path></svg>
+                Clear
+            </button>
+            <button class="action-btn btn-copy" id="copyBtn" aria-label="Copy result to clipboard">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path></svg>
+                Copy Result
+            </button>
+        </div>
+
+    </main>
+
+    <div id="toast" class="toast" role="alert">Result copied to clipboard!</div>
 
     <script>
+        // DOM Elements
         const feetInput = document.getElementById('feetInput');
         const inchesInput = document.getElementById('inchesInput');
+        const totalInchesInput = document.getElementById('totalInchesInput');
         const divideInput = document.getElementById('divideInput');
         
-        const totalInchesDisplay = document.getElementById('totalInchesDisplay');
         const resultFeetDisplay = document.getElementById('resultFeetDisplay');
         const resultInchesDisplay = document.getElementById('resultInchesDisplay');
         const dividedTotalInchesDisplay = document.getElementById('dividedTotalInchesDisplay');
+        
+        const clearBtn = document.getElementById('clearBtn');
+        const copyBtn = document.getElementById('copyBtn');
+        const toast = document.getElementById('toast');
+        const installAppBtn = document.getElementById('installAppBtn');
 
-        // UX Feature: Auto-select text on click so users can type immediately
-        [feetInput, inchesInput, divideInput].forEach(input => {
+        // UX: Auto-select text on click
+        [feetInput, inchesInput, totalInchesInput, divideInput].forEach(input => {
             input.addEventListener('focus', function() {
                 this.select();
             });
         });
 
-        function calculate() {
-            // 1. Get Values
-            const feet = parseFloat(feetInput.value) || 0;
-            const inches = parseFloat(inchesInput.value) || 0;
-            const divisor = parseFloat(divideInput.value) || 0;
+        // Rounding helper to prevent floating point math errors (e.g., 3.0000000004)
+        function roundToTwo(num) {
+            return Math.round((num + Number.EPSILON) * 100) / 100;
+        }
 
-            // 2. Calculate Total Starting Inches
+        // Math Sanitizer: Prevent negative inputs gracefully
+        function sanitizeInput(val) {
+            const parsed = parseFloat(val);
+            return (isNaN(parsed) || parsed < 0) ? 0 : parsed;
+        }
+
+        // Calculate going left-to-right
+        function calculateFromFeet() {
+            const feet = sanitizeInput(feetInput.value);
+            const inches = sanitizeInput(inchesInput.value);
+            
             const totalInches = (feet * 12) + inches;
             
-            // Format total starting inches display
-            totalInchesDisplay.textContent = Number.isInteger(totalInches) ? totalInches : totalInches.toFixed(2);
+            totalInchesInput.value = Number.isInteger(totalInches) ? totalInches : roundToTwo(totalInches);
+            calculateDivided(totalInches);
+        }
 
-            // 3. Calculate Divided Results
-            if (divisor > 0) {
+        // Calculate going right-to-left
+        function calculateFromTotal() {
+            const totalInches = sanitizeInput(totalInchesInput.value);
+            
+            const feet = Math.floor(totalInches / 12);
+            const remainingInches = totalInches % 12;
+
+            feetInput.value = feet;
+            inchesInput.value = Number.isInteger(remainingInches) ? remainingInches : roundToTwo(remainingInches);
+
+            calculateDivided(totalInches);
+        }
+
+        // Handle the bottom division
+        function calculateDivided(totalInches) {
+            const divisor = parseFloat(divideInput.value);
+
+            if (divisor && divisor > 0) {
                 const dividedInches = totalInches / divisor;
                 
-                // Calculate resulting feet and inches
                 const resultFeet = Math.floor(dividedInches / 12);
                 const resultRemainingInches = dividedInches % 12;
 
-                // Format decimals so they look clean
-                const formattedInches = Number.isInteger(resultRemainingInches) 
-                    ? resultRemainingInches 
-                    : parseFloat(resultRemainingInches.toFixed(2));
-
-                const formattedTotalInches = Number.isInteger(dividedInches) 
-                    ? dividedInches 
-                    : parseFloat(dividedInches.toFixed(2));
-
-                // Update all result displays
                 resultFeetDisplay.value = resultFeet;
-                resultInchesDisplay.value = formattedInches;
-                dividedTotalInchesDisplay.textContent = formattedTotalInches;
+                resultInchesDisplay.value = Number.isInteger(resultRemainingInches) ? resultRemainingInches : roundToTwo(resultRemainingInches);
+                dividedTotalInchesDisplay.textContent = Number.isInteger(dividedInches) ? dividedInches : roundToTwo(dividedInches);
             } else {
-                // Default zero state if no divisor is entered
                 resultFeetDisplay.value = 0;
                 resultInchesDisplay.value = 0;
                 dividedTotalInchesDisplay.textContent = 0;
             }
         }
 
-        // Add event listeners for real-time updates
-        feetInput.addEventListener('input', calculate);
-        inchesInput.addEventListener('input', calculate);
-        divideInput.addEventListener('input', calculate);
+        // Action: Clear All
+        clearBtn.addEventListener('click', () => {
+            feetInput.value = '';
+            inchesInput.value = '';
+            totalInchesInput.value = '';
+            divideInput.value = '';
+            calculateFromFeet();
+            feetInput.focus(); 
+        });
+
+        // Action: Copy Result safely
+        async function copyToClipboard(text) {
+            try {
+                if (navigator.clipboard && window.isSecureContext) {
+                    await navigator.clipboard.writeText(text);
+                } else {
+                    // Fallback for older browsers
+                    const textArea = document.createElement("textarea");
+                    textArea.value = text;
+                    textArea.style.position = "absolute";
+                    textArea.style.left = "-999999px";
+                    document.body.prepend(textArea);
+                    textArea.select();
+                    document.execCommand('copy');
+                    textArea.remove();
+                }
+                
+                // Show Toast Notification
+                toast.classList.add('show');
+                setTimeout(() => {
+                    toast.classList.remove('show');
+                }, 3000);
+            } catch (err) {
+                console.error('Failed to copy!', err);
+            }
+        }
+
+        copyBtn.addEventListener('click', () => {
+            const feet = resultFeetDisplay.value || 0;
+            const inches = resultInchesDisplay.value || 0;
+            const total = dividedTotalInchesDisplay.textContent || 0;
+            const divisor = parseFloat(divideInput.value);
+            
+            let textToCopy = '';
+            if (divisor > 0) {
+                textToCopy = `Divided Result: ${feet} ft ${inches} in (Total: ${total} in)`;
+            } else {
+                textToCopy = `Measurement: ${feetInput.value || 0} ft ${inchesInput.value || 0} in (Total: ${totalInchesInput.value || 0} in)`;
+            }
+
+            copyToClipboard(textToCopy);
+        });
+
+        // Event listeners for calculations
+        feetInput.addEventListener('input', calculateFromFeet);
+        inchesInput.addEventListener('input', calculateFromFeet);
+        totalInchesInput.addEventListener('input', calculateFromTotal);
         
-        // Run once on load to populate the initial calculation
-        calculate();
+        divideInput.addEventListener('input', () => {
+            const currentTotal = sanitizeInput(totalInchesInput.value);
+            calculateDivided(currentTotal);
+        });
+        
+        // Run once on load
+        calculateFromFeet();
+
+        // --- PWA & App Install Logic ---
+        
+        // 1. Inject Manifest
+        const manifest = {
+            name: "SimplyDoors Calc",
+            short_name: "SD Calc",
+            description: "SimplyDoors Measurement Calculator",
+            start_url: ".",
+            display: "standalone",
+            background_color: "#0f172a",
+            theme_color: "#0f172a",
+            icons: [{
+                src: "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Crect width='100' height='100' rx='20' fill='%230f172a'/%3E%3Ctext x='50' y='65' font-family='Arial' font-size='50' font-weight='bold' fill='%23059669' text-anchor='middle'%3ESD%3C/text%3E%3C/svg%3E",
+                sizes: "192x192",
+                type: "image/svg+xml",
+                purpose: "any maskable"
+            }]
+        };
+        const manifestBlob = new Blob([JSON.stringify(manifest)], {type: 'application/json'});
+        document.getElementById('manifest-placeholder').href = URL.createObjectURL(manifestBlob);
+
+        // 2. Inject Service Worker for Offline Capability
+        if ('serviceWorker' in navigator) {
+            const swCode = `
+                const CACHE_NAME = 'sd-calc-v1';
+                self.addEventListener('install', (e) => {
+                    self.skipWaiting();
+                });
+                self.addEventListener('activate', (e) => {
+                    e.waitUntil(clients.claim());
+                });
+                self.addEventListener('fetch', (e) => {
+                    e.respondWith(
+                        fetch(e.request).catch(() => new Response('Offline Mode Active'))
+                    );
+                });
+            `;
+            const swBlob = new Blob([swCode], {type: 'application/javascript'});
+            navigator.serviceWorker.register(URL.createObjectURL(swBlob)).catch(err => console.log('SW Registration Failed:', err));
+        }
+
+        // 3. Handle Install Prompts
+        let deferredPrompt;
+        const isIOS = /iPad|iPhone|iPod/.test(navigator.userAgent) && !window.MSStream;
+        
+        if (isIOS) {
+            installAppBtn.style.display = 'block';
+            installAppBtn.addEventListener('click', () => {
+                alert('To install the SimplyDoors Calc app:\n\n1. Tap the Share icon at the bottom of Safari.\n2. Scroll down and tap "Add to Home Screen".');
+            });
+        }
+
+        window.addEventListener('beforeinstallprompt', (e) => {
+            e.preventDefault();
+            deferredPrompt = e;
+            installAppBtn.style.display = 'block';
+
+            installAppBtn.addEventListener('click', async () => {
+                installAppBtn.style.display = 'none';
+                deferredPrompt.prompt();
+                const { outcome } = await deferredPrompt.userChoice;
+                deferredPrompt = null;
+            });
+        });
+
+        window.addEventListener('appinstalled', () => {
+            installAppBtn.style.display = 'none';
+        });
+
     </script>
 </body>
 </html>
