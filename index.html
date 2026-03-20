@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <meta name="description" content="SimplyDoors Measurement Calculator - Quick conversions and divisions for feet and inches.">
+    <meta name="description" content="SimplyDoors Measurement & Trim Calculator">
     <title>SimplyDoors Measurement Calculator</title>
     
     <meta name="theme-color" content="#0f172a">
@@ -12,8 +12,6 @@
     <meta name="apple-mobile-web-app-title" content="SD Calc">
     
     <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Crect width='100' height='100' rx='20' fill='%230f172a'/%3E%3Ctext x='50' y='65' font-family='Arial' font-size='50' font-weight='bold' fill='%23059669' text-anchor='middle'%3ESD%3C/text%3E%3C/svg%3E">
-    
-    <link rel="manifest" id="manifest-placeholder">
 
     <style>
         :root {
@@ -29,6 +27,23 @@
             --input-readonly: #f1f5f9;  
         }
 
+        /* --- Custom Scrollbars --- */
+        ::-webkit-scrollbar {
+            width: 8px;
+            height: 8px;
+        }
+        ::-webkit-scrollbar-track {
+            background: #f1f5f9; 
+            border-radius: 4px;
+        }
+        ::-webkit-scrollbar-thumb {
+            background: #cbd5e1; 
+            border-radius: 4px;
+        }
+        ::-webkit-scrollbar-thumb:hover {
+            background: #94a3b8; 
+        }
+
         body {
             font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
             background-color: var(--bg-page);
@@ -37,7 +52,7 @@
             padding: 0;
             display: flex;
             flex-direction: column;
-            align-items: center;
+            align-items: flex-start;
             min-height: 100vh;
             -webkit-tap-highlight-color: transparent;
         }
@@ -53,7 +68,10 @@
             justify-content: space-between;
             align-items: center;
             border-bottom: 4px solid var(--brand-primary);
-            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+            box-shadow: 0 4px 6px -1px rgba(0,0,0,0.1);
+            position: sticky;
+            top: 0;
+            z-index: 100;
         }
 
         .logo-container {
@@ -80,34 +98,61 @@
             margin-top: 4px;
         }
 
-        .install-btn {
-            background-color: var(--brand-primary);
-            color: white;
-            border: none;
-            padding: 8px 12px;
-            border-radius: 6px;
-            font-size: 0.85rem;
-            font-weight: 600;
-            cursor: pointer;
-            display: none; 
-            transition: background-color 0.2s;
+        /* --- Dashboard Layout --- */
+        .layout-wrapper {
+            width: 100%;
+            max-width: 1600px;
+            margin: 0 auto;
+            padding: 20px;
+            box-sizing: border-box;
+            display: grid;
+            grid-template-columns: minmax(0, 1fr) 420px;
+            gap: 20px;
+            align-items: start;
         }
 
-        .install-btn:active, .install-btn:hover {
-            background-color: #047857;
+        .calculators-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(340px, 1fr));
+            gap: 15px;
         }
 
         /* --- Main Calculator Card --- */
         .app-container {
             width: 100%;
-            max-width: 600px;
             background-color: var(--bg-card);
-            margin-top: 20px;
             border-radius: 12px;
             box-shadow: 0 4px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -4px rgba(0, 0, 0, 0.05);
             border: 1px solid var(--border-color);
             overflow: hidden;
-            margin-bottom: 40px;
+        }
+
+        .card-header {
+            background-color: var(--text-main);
+            color: white;
+            padding: 12px 20px;
+            font-weight: 600;
+            font-size: 1rem;
+            letter-spacing: 0.5px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        /* --- Sidebar Tally Specific --- */
+        .tally-sidebar {
+            position: sticky;
+            top: 85px; 
+            height: calc(100vh - 100px);
+            display: flex;
+            flex-direction: column;
+            margin: 0 !important;
+            overflow-y: auto;
+        }
+
+        .tally-scroll-area {
+            flex: 1;
+            background-color: #fafaf9;
         }
 
         /* --- Grid Layout for Rows --- */
@@ -122,7 +167,7 @@
         }
 
         .section-half {
-            padding: 20px;
+            padding: 15px; 
             display: flex;
             flex-direction: column;
             justify-content: flex-end;
@@ -134,30 +179,37 @@
             background-color: #fafaf9; 
         }
 
+        .full-row {
+            grid-column: 1 / -1;
+            padding: 12px 15px; 
+            border-bottom: 1px solid var(--border-color);
+            background-color: #f1f5f9;
+        }
+
         /* Divider Row (Middle) */
         .divide-row {
             grid-column: 1 / -1; 
             background-color: var(--brand-dark);
             color: white;
-            padding: 20px;
+            padding: 15px;
             display: flex;
             justify-content: space-between;
             align-items: center;
         }
 
         .divide-label {
-            font-size: 1.2rem;
+            font-size: 1.1rem;
             font-weight: 600;
             color: white;
         }
 
         /* --- Typography & Labels --- */
         .row-title {
-            font-size: 0.85rem;
+            font-size: 0.75rem;
             font-weight: 700;
             text-transform: uppercase;
             color: var(--text-muted);
-            margin-bottom: 15px;
+            margin-bottom: 6px;
             letter-spacing: 0.5px;
         }
 
@@ -165,7 +217,7 @@
         .dual-inputs {
             display: flex;
             align-items: flex-end;
-            gap: 10px;
+            gap: 8px;
         }
 
         .input-group {
@@ -180,22 +232,41 @@
             align-items: center;
         }
 
-        input[type="number"] {
+        input[type="number"], input[type="text"] {
             background-color: var(--input-bg);
             color: var(--brand-dark);
             border: 2px solid var(--border-color);
-            border-radius: 8px;
-            font-size: 1.75rem;
+            border-radius: 6px;
+            font-size: 1.35rem; 
             font-weight: 600;
             text-align: right;
-            padding: 8px 35px 8px 12px; 
+            padding: 8px 30px 8px 10px; 
             width: 100%;
             box-sizing: border-box;
             outline: none;
             transition: all 0.2s ease;
         }
 
-        input[type="number"]:focus {
+        input[type="number"].qty-input {
+            text-align: center;
+            padding-right: 10px;
+            padding-left: 10px;
+        }
+
+        input[type="text"].quick-code {
+            font-size: 1.1rem;
+            text-align: center;
+            letter-spacing: 2px;
+            padding-right: 10px;
+        }
+
+        input[type="text"].label-input {
+            font-size: 0.95rem;
+            text-align: left;
+            padding-right: 10px;
+        }
+
+        input[type="number"]:focus, input[type="text"]:focus {
             border-color: var(--brand-primary);
             box-shadow: 0 0 0 3px rgba(5, 150, 105, 0.15); 
         }
@@ -216,20 +287,47 @@
             -moz-appearance: textfield;
         }
 
+        select.trim-select {
+            background-color: var(--input-bg);
+            color: var(--brand-dark);
+            border: 2px solid var(--border-color);
+            border-radius: 6px;
+            font-size: 0.95rem;
+            font-weight: 600;
+            padding: 10px 10px;
+            width: 100%;
+            box-sizing: border-box;
+            outline: none;
+            transition: all 0.2s ease;
+            cursor: pointer;
+        }
+
+        select.trim-select:focus {
+            border-color: var(--brand-primary);
+            box-shadow: 0 0 0 3px rgba(5, 150, 105, 0.15);
+        }
+
+        /* Fix for Option visibility on dark backgrounds */
+        select option {
+            background-color: #ffffff;
+            color: #334155;
+        }
+
         .unit-inline {
             position: absolute;
-            right: 12px;
-            font-size: 1rem;
+            right: 8px;
+            font-size: 0.85rem;
             font-weight: 600;
             color: var(--text-muted);
             pointer-events: none; 
         }
 
         .divide-input {
-            width: 120px !important;
+            width: 100px !important;
             border-color: transparent !important;
             background-color: rgba(255, 255, 255, 0.1) !important;
             color: white !important;
+            padding-right: 10px !important;
         }
         
         .divide-input:focus {
@@ -238,11 +336,11 @@
         }
 
         .total-number-input {
-            font-size: 2.2rem !important; 
+            font-size: 1.8rem !important; 
             color: var(--brand-primary) !important;
             border-color: transparent !important; 
             background-color: transparent !important;
-            padding-right: 30px !important; 
+            padding-right: 25px !important; 
         }
 
         .total-number-input:hover {
@@ -259,19 +357,19 @@
             display: flex;
             align-items: baseline;
             justify-content: flex-end;
-            gap: 8px;
-            padding-right: 15px; 
+            gap: 6px;
         }
 
         .total-number {
-            font-size: 2.2rem;
+            font-size: 1.8rem;
             font-weight: 700;
             color: var(--brand-primary);
             word-break: break-all;
+            line-height: 1;
         }
 
         .total-unit {
-            font-size: 1.1rem;
+            font-size: 1rem;
             font-weight: 600;
             color: var(--text-muted);
         }
@@ -281,7 +379,7 @@
             grid-column: 1 / -1;
             display: flex;
             justify-content: space-between;
-            padding: 15px 20px;
+            padding: 10px 15px;
             background-color: #f1f5f9;
             border-top: 1px solid var(--border-color);
         }
@@ -292,18 +390,23 @@
             gap: 6px;
             background: none;
             border: 1px solid var(--border-color);
-            padding: 10px 16px;
-            border-radius: 8px;
+            padding: 8px 14px;
+            border-radius: 6px;
             font-size: 0.9rem;
             font-weight: 600;
             color: var(--text-main);
             background-color: white;
             cursor: pointer;
-            transition: all 0.2s;
+            transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
         }
 
-        .action-btn:active, .action-btn:hover {
+        .action-btn:active {
+            transform: scale(0.96);
+        }
+
+        .action-btn:hover {
             background-color: #e2e8f0;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.05);
         }
 
         .btn-copy {
@@ -312,8 +415,138 @@
             border-color: var(--brand-primary);
         }
 
-        .btn-copy:active, .btn-copy:hover {
+        .btn-copy:hover {
             background-color: #047857;
+            border-color: #047857;
+        }
+
+        #addToTallyBtnDoor:hover { background-color: #1d4ed8; border-color: #1d4ed8; color: white;}
+        #addToTallyBtnBase:hover { background-color: #c2410c; border-color: #c2410c; color: white;}
+
+        /* Custom checkbox */
+        .custom-checkbox-wrapper {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            margin-top: 8px;
+            font-weight: 600;
+            color: var(--text-main);
+            font-size: 0.85rem;
+            cursor: pointer;
+            background: #ffffff;
+            padding: 8px;
+            border: 1px solid var(--border-color);
+            border-radius: 6px;
+            transition: border-color 0.2s;
+        }
+        
+        .custom-checkbox-wrapper:hover {
+            border-color: var(--brand-primary);
+        }
+
+        .custom-checkbox-wrapper input[type="checkbox"] {
+            width: 16px;
+            height: 16px;
+            accent-color: var(--brand-primary);
+            cursor: pointer;
+            margin: 0;
+        }
+
+        /* --- Tally List Styling --- */
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(5px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .tally-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 12px 15px;
+            border-bottom: 1px solid var(--border-color);
+            background-color: #ffffff;
+            animation: fadeIn 0.3s ease-out forwards;
+        }
+        .tally-item:last-child {
+            border-bottom: none;
+        }
+        .tally-details {
+            font-size: 0.85rem;
+            color: var(--text-main);
+            font-weight: 600;
+            margin-bottom: 2px;
+        }
+        .tally-subtext {
+            font-size: 0.75rem;
+            color: var(--text-muted);
+        }
+        .tally-values {
+            text-align: right;
+        }
+        .tally-exact {
+            font-size: 1rem;
+            font-weight: 700;
+            color: var(--brand-primary);
+        }
+        .btn-remove {
+            background: none;
+            border: none;
+            color: #ef4444;
+            cursor: pointer;
+            padding: 4px 8px;
+            margin-left: 8px;
+            font-size: 1.1rem;
+            border-radius: 4px;
+            transition: background-color 0.2s;
+        }
+        .btn-remove:hover {
+            background-color: #fef2f2;
+        }
+        .btn-text-action {
+            background: none;
+            border: none;
+            color: rgba(255,255,255,0.8);
+            font-size: 0.85rem;
+            font-weight: 600;
+            cursor: pointer;
+            text-decoration: underline;
+            padding: 5px;
+            transition: color 0.2s;
+        }
+        .btn-text-action:hover {
+            color: white;
+        }
+
+        /* Grouped Materials Section */
+        .material-group {
+            background: rgba(255,255,255,0.05);
+            border: 1px solid rgba(255,255,255,0.15);
+            border-radius: 8px;
+            padding: 12px;
+            margin-bottom: 12px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            gap: 15px;
+            flex-wrap: wrap;
+        }
+        .material-group:last-child {
+            margin-bottom: 0;
+        }
+        .mg-title {
+            font-weight: bold;
+            font-size: 1rem;
+            color: var(--brand-accent);
+            margin-bottom: 4px;
+        }
+        .mg-stats {
+            font-size: 0.8rem;
+            color: #cbd5e1;
+        }
+        .mg-order {
+            display: flex;
+            align-items: center;
+            gap: 15px;
         }
 
         /* --- Toast Notification --- */
@@ -324,20 +557,120 @@
             transform: translateX(-50%) translateY(100px);
             background-color: var(--brand-dark);
             color: white;
-            padding: 12px 24px;
+            padding: 10px 20px;
             border-radius: 50px;
             font-weight: 600;
-            font-size: 0.9rem;
+            font-size: 0.85rem;
             opacity: 0;
             transition: all 0.3s cubic-bezier(0.68, -0.55, 0.265, 1.55);
             pointer-events: none;
             box-shadow: 0 4px 12px rgba(0,0,0,0.15);
             z-index: 1000;
+            display: flex;
+            align-items: center;
+            gap: 8px;
         }
 
         .toast.show {
             transform: translateX(-50%) translateY(0);
             opacity: 1;
+        }
+
+        /* --- RESPONSIVE LAYOUT --- */
+        @media (max-width: 1100px) {
+            .layout-wrapper {
+                grid-template-columns: 1fr; /* Stack vertically on smaller screens */
+            }
+            .tally-sidebar {
+                position: relative;
+                top: 0;
+                height: auto;
+            }
+            .tally-scroll-area {
+                overflow-y: visible;
+            }
+        }
+
+        /* --- PRINT STYLES --- */
+        @media print {
+            @page {
+                margin: 0.5in;
+            }
+            body { 
+                background: white; 
+                -webkit-print-color-adjust: exact !important; 
+                print-color-adjust: exact !important;
+            }
+            .calculators-grid { display: none !important; }
+            .brand-header { 
+                box-shadow: none; 
+                border-bottom: 3px solid black; 
+                background: white; 
+                color: black; 
+                padding: 0 0 10px 0;
+                position: relative;
+            }
+            .logo-simply, .logo-doors, .header-title { color: black !important; }
+            .install-btn, .btn-remove, .btn-text-action, .toolbar, #toast { display: none !important; }
+            
+            .layout-wrapper {
+                padding: 0;
+                display: block;
+            }
+
+            #tally-card { 
+                box-shadow: none; 
+                border: none; 
+                margin: 0; 
+                max-width: 100%; 
+                position: relative;
+                top: 0;
+                height: auto;
+                overflow: visible;
+            }
+            .card-header {
+                background: white !important;
+                color: black !important;
+                border-bottom: 2px solid black;
+                padding-left: 0;
+                padding-right: 0;
+            }
+            .tally-item { 
+                break-inside: avoid; 
+                padding-left: 0;
+                padding-right: 0;
+            }
+            .tally-exact { color: black !important; }
+            
+            #grandTotalPrintSection {
+                background-color: white !important;
+                color: black !important;
+                border-top: 3px solid black;
+                padding-left: 0;
+                padding-right: 0;
+                box-shadow: none !important;
+            }
+            .material-group {
+                border-color: #ccc;
+                color: black;
+                break-inside: avoid;
+            }
+            .mg-title { color: black !important; }
+            .mg-stats { color: #333 !important; }
+            
+            select.trim-select {
+                background: white !important;
+                color: black !important;
+                border: 1px solid #ccc !important;
+                appearance: none;
+                -webkit-appearance: none;
+            }
+            
+            .brand-header::after {
+                content: "Project Trim Takeoff";
+                font-weight: bold;
+                font-size: 1.2rem;
+            }
         }
 
     </style>
@@ -349,93 +682,436 @@
             <div class="logo">
                 <span class="logo-simply">Simply</span><span class="logo-doors">Doors</span>
             </div>
-            <div class="header-title">Measurement Calc</div>
+            <div class="header-title">Measurement Tools</div>
         </div>
-        <button id="installAppBtn" class="install-btn" aria-label="Install App to Home Screen">Install App</button>
     </header>
 
-    <main class="app-container">
+    <div class="layout-wrapper">
         
-        <div class="calc-row">
-            <div class="section-half left-half">
-                <div class="row-title" id="start-measure-label">Starting Measurement</div>
-                <div class="dual-inputs">
-                    <div class="input-group">
-                        <div class="input-wrapper">
-                            <input type="number" id="feetInput" value="6" min="0" step="1" inputmode="decimal" aria-labelledby="start-measure-label" aria-label="Feet">
-                            <span class="unit-inline" aria-hidden="true">ft</span>
+        <div class="calculators-grid">
+            
+            <main class="app-container">
+                <div class="card-header">Measurement Divider</div>
+                <div class="calc-row">
+                    <div class="section-half left-half">
+                        <div class="row-title">Starting Measurement</div>
+                        <div class="dual-inputs">
+                            <div class="input-group">
+                                <div class="input-wrapper">
+                                    <input type="number" id="feetInput" value="6" min="0" step="1" inputmode="decimal">
+                                    <span class="unit-inline">ft</span>
+                                </div>
+                            </div>
+                            <div class="input-group">
+                                <div class="input-wrapper">
+                                    <input type="number" id="inchesInput" value="3" min="0" max="11" step="any" inputmode="decimal">
+                                    <span class="unit-inline">in</span>
+                                </div>
+                            </div>
                         </div>
                     </div>
-                    <div class="input-group">
-                        <div class="input-wrapper">
-                            <input type="number" id="inchesInput" value="3" min="0" max="11" step="any" inputmode="decimal" aria-labelledby="start-measure-label" aria-label="Inches">
-                            <span class="unit-inline" aria-hidden="true">in</span>
+                    <div class="section-half">
+                        <div class="row-title">Total Starting Inches</div>
+                        <div class="input-wrapper" style="justify-content: flex-end;">
+                            <input type="number" class="total-number-input" id="totalInchesInput" value="75" min="0" step="any" inputmode="decimal">
+                            <span class="unit-inline" style="right: 5px;">in</span>
                         </div>
                     </div>
+                </div>
+
+                <div class="calc-row">
+                    <div class="divide-row">
+                        <div class="divide-label">Divide By</div>
+                        <input type="number" class="divide-input" id="divideInput" placeholder="e.g. 2" min="0.1" step="any" inputmode="decimal">
+                    </div>
+                </div>
+
+                <div class="calc-row">
+                    <div class="section-half left-half">
+                        <div class="row-title">Divided Result</div>
+                        <div class="dual-inputs">
+                            <div class="input-group">
+                                <div class="input-wrapper">
+                                    <input type="number" id="resultFeetDisplay" value="0" readonly>
+                                    <span class="unit-inline">ft</span>
+                                </div>
+                            </div>
+                            <div class="input-group">
+                                <div class="input-wrapper">
+                                    <input type="number" id="resultInchesDisplay" value="0" readonly>
+                                    <span class="unit-inline">in</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="section-half">
+                        <div class="row-title">Divided Total Inches</div>
+                        <div class="total-value-container">
+                            <div class="total-number" id="dividedTotalInchesDisplay">0</div>
+                            <div class="total-unit">in</div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="toolbar">
+                    <button class="action-btn" id="clearBtn">
+                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 6h18"></path><path d="M19 6v14c0 1-1 2-2 2H7c-1 0-2-1-2-2V6"></path><path d="M8 6V4c0-1 1-2 2-2h4c1 0 2 1 2 2v2"></path></svg> Clear
+                    </button>
+                    <button class="action-btn btn-copy" id="copyBtn">
+                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path></svg> Copy
+                    </button>
+                </div>
+            </main>
+
+            <main class="app-container">
+                <div class="card-header">Window Trim Estimator</div>
+                
+                <div class="calc-row">
+                    <div class="section-half left-half">
+                        <div class="row-title">Quantity</div>
+                        <div class="input-wrapper">
+                            <input type="number" id="winQty" value="1" min="1" step="1" inputmode="numeric" class="qty-input">
+                        </div>
+                    </div>
+                    <div class="section-half">
+                        <div class="row-title">Quick Entry Code</div>
+                        <input type="text" id="blueprintCodeWindow" class="quick-code" placeholder="e.g. 3050" maxlength="4" inputmode="numeric">
+                    </div>
+                </div>
+
+                <div class="full-row" style="background-color: white; border-top: 1px solid var(--border-color);">
+                    <div class="row-title">Label / Location (Opt)</div>
+                    <input type="text" id="winLabel" class="label-input" placeholder="e.g. Family Room">
+                </div>
+
+                <div class="calc-row">
+                    <div class="section-half left-half">
+                        <div class="row-title">Window Width</div>
+                        <div class="dual-inputs">
+                            <div class="input-group">
+                                <div class="input-wrapper">
+                                    <input type="number" id="winWidthFeet" value="3" min="0" step="1" inputmode="decimal">
+                                    <span class="unit-inline">ft</span>
+                                </div>
+                            </div>
+                            <div class="input-group">
+                                <div class="input-wrapper">
+                                    <input type="number" id="winWidthInches" value="0" min="0" max="11" step="any" inputmode="decimal">
+                                    <span class="unit-inline">in</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="section-half">
+                        <div class="row-title">Window Height</div>
+                        <div class="dual-inputs">
+                            <div class="input-group">
+                                <div class="input-wrapper">
+                                    <input type="number" id="winHeightFeet" value="5" min="0" step="1" inputmode="decimal">
+                                    <span class="unit-inline">ft</span>
+                                </div>
+                            </div>
+                            <div class="input-group">
+                                <div class="input-wrapper">
+                                    <input type="number" id="winHeightInches" value="0" min="0" max="11" step="any" inputmode="decimal">
+                                    <span class="unit-inline">in</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="calc-row">
+                    <div class="section-half left-half">
+                        <div class="row-title">Trim Size (Face)</div>
+                        <select id="winTrimSizeSelect" class="trim-select">
+                            <option value="2.25">CASE A214 (2-1/4")</option>
+                            <option value="2.5">CASE A212 (2-1/2")</option>
+                            <option value="3.5" selected>1x4 BRDS (3-1/2")</option>
+                            <option value="5.5">1x6 BRDS (5-1/2")</option>
+                            <option value="0">No Overlap (Inner Perim)</option>
+                        </select>
+                    </div>
+                    <div class="section-half" style="justify-content: flex-end; padding-bottom: 12px;">
+                        <div class="row-title">Trim Options</div>
+                        <label class="custom-checkbox-wrapper">
+                            <input type="checkbox" id="includeReturnCheckbox" checked>
+                            Include Jamb Return
+                        </label>
+                    </div>
+                </div>
+
+                <div class="calc-row" style="background-color: var(--brand-dark);">
+                    <div class="section-half left-half" style="background-color: transparent; border-right: 1px solid rgba(255,255,255,0.15);">
+                        <div class="row-title" style="color: #cbd5e1;">Exact Required</div>
+                        <div class="total-value-container" style="flex-direction: column; align-items: flex-start; gap: 4px;">
+                            <div>
+                                <span class="total-number" id="winExactLfDisplay" style="color: white; font-size: 1.6rem;">0</span>
+                                <span class="total-unit" style="color: rgba(255,255,255,0.7);">LF</span>
+                            </div>
+                            <div style="font-size: 0.85rem; color: #94a3b8; font-weight: 600;" id="winExactInchesDisplay">0 in</div>
+                        </div>
+                    </div>
+                    <div class="section-half" style="background-color: var(--brand-accent);">
+                        <div class="row-title" style="color: rgba(255,255,255,0.9);">Recommended (+10%)</div>
+                        <div class="total-value-container" style="flex-direction: column; align-items: flex-end; gap: 4px;">
+                            <div>
+                                <span class="total-number" id="winRecLfDisplay" style="color: white; font-size: 2rem;">0</span>
+                                <span class="total-unit" style="color: rgba(255,255,255,0.9);">LF</span>
+                            </div>
+                            <div style="font-size: 0.95rem; color: rgba(255,255,255,0.8); font-weight: 600;" id="winRecInchesDisplay">0 in</div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="toolbar" style="justify-content: center;">
+                    <button class="action-btn btn-copy" id="addToTallyBtnWindow" style="width: 100%; justify-content: center; font-size: 1.05rem;">
+                        + Add Window to Project Tally
+                    </button>
+                </div>
+            </main>
+
+            <main class="app-container">
+                <div class="card-header" style="background-color: #334155;">Door Trim Estimator (3-Sided)</div>
+                
+                <div class="calc-row">
+                    <div class="section-half left-half">
+                        <div class="row-title">Quantity</div>
+                        <div class="input-wrapper">
+                            <input type="number" id="doorQty" value="1" min="1" step="1" inputmode="numeric" class="qty-input">
+                        </div>
+                    </div>
+                    <div class="section-half">
+                        <div class="row-title">Quick Entry Code</div>
+                        <input type="text" id="blueprintCodeDoor" class="quick-code" placeholder="e.g. 2868" maxlength="4" inputmode="numeric">
+                    </div>
+                </div>
+
+                <div class="full-row" style="background-color: white; border-top: 1px solid var(--border-color);">
+                    <div class="row-title">Label / Location (Opt)</div>
+                    <input type="text" id="doorLabel" class="label-input" placeholder="e.g. Hallway Doors">
+                </div>
+
+                <div class="calc-row">
+                    <div class="section-half left-half">
+                        <div class="row-title">Door Width</div>
+                        <div class="dual-inputs">
+                            <div class="input-group">
+                                <div class="input-wrapper">
+                                    <input type="number" id="doorWidthFeet" value="3" min="0" step="1" inputmode="decimal">
+                                    <span class="unit-inline">ft</span>
+                                </div>
+                            </div>
+                            <div class="input-group">
+                                <div class="input-wrapper">
+                                    <input type="number" id="doorWidthInches" value="0" min="0" max="11" step="any" inputmode="decimal">
+                                    <span class="unit-inline">in</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="section-half">
+                        <div class="row-title">Door Height</div>
+                        <div class="dual-inputs">
+                            <div class="input-group">
+                                <div class="input-wrapper">
+                                    <input type="number" id="doorHeightFeet" value="6" min="0" step="1" inputmode="decimal">
+                                    <span class="unit-inline">ft</span>
+                                </div>
+                            </div>
+                            <div class="input-group">
+                                <div class="input-wrapper">
+                                    <input type="number" id="doorHeightInches" value="8" min="0" max="11" step="any" inputmode="decimal">
+                                    <span class="unit-inline">in</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="calc-row">
+                    <div class="section-half left-half">
+                        <div class="row-title">Trim Size (Face)</div>
+                        <select id="doorTrimSizeSelect" class="trim-select">
+                            <option value="2.25">CASE A214 (2-1/4")</option>
+                            <option value="2.5">CASE A212 (2-1/2")</option>
+                            <option value="3.5" selected>1x4 BRDS (3-1/2")</option>
+                            <option value="5.5">1x6 BRDS (5-1/2")</option>
+                            <option value="0">No Overlap (Inner Perim)</option>
+                        </select>
+                    </div>
+                    <div class="section-half">
+                        <div class="row-title">Door Type</div>
+                        <select id="doorSidesSelect" class="trim-select">
+                            <option value="2" selected>Interior (Both Sides)</option>
+                            <option value="1">Exterior (1 Side)</option>
+                        </select>
+                    </div>
+                </div>
+
+                <div class="calc-row" style="background-color: var(--brand-dark);">
+                    <div class="section-half left-half" style="background-color: transparent; border-right: 1px solid rgba(255,255,255,0.15);">
+                        <div class="row-title" style="color: #cbd5e1;">Exact Required</div>
+                        <div class="total-value-container" style="flex-direction: column; align-items: flex-start; gap: 4px;">
+                            <div>
+                                <span class="total-number" id="doorExactLfDisplay" style="color: white; font-size: 1.6rem;">0</span>
+                                <span class="total-unit" style="color: rgba(255,255,255,0.7);">LF</span>
+                            </div>
+                            <div style="font-size: 0.85rem; color: #94a3b8; font-weight: 600;" id="doorExactInchesDisplay">0 in</div>
+                        </div>
+                    </div>
+                    <div class="section-half" style="background-color: #3b82f6;">
+                        <div class="row-title" style="color: rgba(255,255,255,0.9);">Recommended (+10%)</div>
+                        <div class="total-value-container" style="flex-direction: column; align-items: flex-end; gap: 4px;">
+                            <div>
+                                <span class="total-number" id="doorRecLfDisplay" style="color: white; font-size: 2rem;">0</span>
+                                <span class="total-unit" style="color: rgba(255,255,255,0.9);">LF</span>
+                            </div>
+                            <div style="font-size: 0.95rem; color: rgba(255,255,255,0.8); font-weight: 600;" id="doorRecInchesDisplay">0 in</div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="toolbar" style="justify-content: center;">
+                    <button class="action-btn btn-copy" id="addToTallyBtnDoor" style="background-color: #2563eb; border-color: #2563eb; width: 100%; justify-content: center; font-size: 1.05rem; color: white;">
+                        + Add Door to Project Tally
+                    </button>
+                </div>
+            </main>
+
+            <main class="app-container">
+                <div class="card-header" style="background-color: #7c2d12;">Baseboard Estimator (Linear)</div>
+                
+                <div class="full-row" style="background-color: white;">
+                    <div class="row-title">Label / Location (Opt)</div>
+                    <input type="text" id="baseLabel" class="label-input" placeholder="e.g. First Floor Total">
+                </div>
+
+                <div class="calc-row">
+                    <div class="section-half left-half">
+                        <div class="row-title">Total Length (Feet & Inches)</div>
+                        <div class="dual-inputs">
+                            <div class="input-group">
+                                <div class="input-wrapper">
+                                    <input type="number" id="baseFeet" value="100" min="0" step="1" inputmode="decimal">
+                                    <span class="unit-inline">ft</span>
+                                </div>
+                            </div>
+                            <div class="input-group">
+                                <div class="input-wrapper">
+                                    <input type="number" id="baseInches" value="0" min="0" max="11" step="any" inputmode="decimal">
+                                    <span class="unit-inline">in</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="section-half">
+                        <div class="row-title">Total Length (Inches Only)</div>
+                        <div class="input-wrapper" style="justify-content: flex-end;">
+                            <input type="number" class="total-number-input" id="baseTotalInches" value="1200" min="0" step="any" inputmode="decimal">
+                            <span class="unit-inline" style="right: 5px;">in</span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="full-row" style="background-color: white; border-top: 1px solid var(--border-color); padding-top: 20px; padding-bottom: 20px;">
+                    <div class="row-title">Trim Profile</div>
+                    <select id="baseTrimSelect" class="trim-select">
+                        <option value="1x4 BRDS (3-1/2&quot;)">1x4 BRDS (3-1/2")</option>
+                        <option value="1x6 BRDS (5-1/2&quot;)" selected>1x6 BRDS (5-1/2")</option>
+                        <option value="3-1/4&quot; Baseboard">3-1/4" Baseboard</option>
+                        <option value="5-1/4&quot; Baseboard">5-1/4" Baseboard</option>
+                        <option value="Shoe Molding">Shoe Molding</option>
+                    </select>
+                </div>
+
+                <div class="calc-row" style="background-color: var(--brand-dark);">
+                    <div class="section-half left-half" style="background-color: transparent; border-right: 1px solid rgba(255,255,255,0.15);">
+                        <div class="row-title" style="color: #cbd5e1;">Exact Required</div>
+                        <div class="total-value-container" style="flex-direction: column; align-items: flex-start; gap: 4px;">
+                            <div>
+                                <span class="total-number" id="baseExactLfDisplay" style="color: white; font-size: 1.6rem;">0</span>
+                                <span class="total-unit" style="color: rgba(255,255,255,0.7);">LF</span>
+                            </div>
+                            <div style="font-size: 0.85rem; color: #94a3b8; font-weight: 600;" id="baseExactInchesDisplay">0 in</div>
+                        </div>
+                    </div>
+                    <div class="section-half" style="background-color: #ea580c;">
+                        <div class="row-title" style="color: rgba(255,255,255,0.9);">Recommended (+10%)</div>
+                        <div class="total-value-container" style="flex-direction: column; align-items: flex-end; gap: 4px;">
+                            <div>
+                                <span class="total-number" id="baseRecLfDisplay" style="color: white; font-size: 2rem;">0</span>
+                                <span class="total-unit" style="color: rgba(255,255,255,0.9);">LF</span>
+                            </div>
+                            <div style="font-size: 0.95rem; color: rgba(255,255,255,0.8); font-weight: 600;" id="baseRecInchesDisplay">0 in</div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="toolbar" style="justify-content: center;">
+                    <button class="action-btn btn-copy" id="addToTallyBtnBase" style="background-color: #ea580c; border-color: #ea580c; width: 100%; justify-content: center; font-size: 1.05rem; color: white;">
+                        + Add Baseboard to Project Tally
+                    </button>
+                </div>
+            </main>
+
+        </div>
+
+        <main class="app-container tally-sidebar" id="tally-card">
+            <div class="card-header">
+                <span>Project Tally</span>
+                <div style="display: flex; gap: 15px;">
+                    <button id="printTallyBtn" class="btn-text-action">
+                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="vertical-align: middle; margin-right: 4px;"><polyline points="6 9 6 2 18 2 18 9"></polyline><path d="M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2"></path><rect x="6" y="14" width="12" height="8"></rect></svg>Print
+                    </button>
+                    <button id="clearTallyBtn" class="btn-text-action">Clear All</button>
                 </div>
             </div>
             
-            <div class="section-half">
-                <div class="row-title" id="total-start-label">Total Starting Inches</div>
-                <div class="input-wrapper" style="justify-content: flex-end;">
-                    <input type="number" class="total-number-input" id="totalInchesInput" value="75" min="0" step="any" inputmode="decimal" aria-labelledby="total-start-label">
-                    <span class="unit-inline" style="right: 5px;" aria-hidden="true">in</span>
+            <div class="tally-scroll-area" id="tallyListContainer">
+                <div style="padding: 30px 20px; text-align: center; color: var(--text-muted); font-size: 0.9rem;" id="emptyTallyMsg">
+                    No items added yet.<br>Enter dimensions to the left and click "Add to Project Tally".
                 </div>
             </div>
-        </div>
 
-        <div class="calc-row">
-            <div class="divide-row">
-                <div class="divide-label" id="divide-label">Divide By</div>
-                <input type="number" class="divide-input" id="divideInput" placeholder="e.g. 2" min="0.1" step="any" inputmode="decimal" aria-labelledby="divide-label">
-            </div>
-        </div>
-
-        <div class="calc-row">
-            <div class="section-half left-half">
-                <div class="row-title" id="result-measure-label">Divided Result</div>
-                <div class="dual-inputs">
-                    <div class="input-group">
-                        <div class="input-wrapper">
-                            <input type="number" id="resultFeetDisplay" value="0" readonly aria-labelledby="result-measure-label" aria-label="Resulting Feet">
-                            <span class="unit-inline" aria-hidden="true">ft</span>
-                        </div>
-                    </div>
-                    <div class="input-group">
-                        <div class="input-wrapper">
-                            <input type="number" id="resultInchesDisplay" value="0" readonly aria-labelledby="result-measure-label" aria-label="Resulting Inches">
-                            <span class="unit-inline" aria-hidden="true">in</span>
-                        </div>
-                    </div>
+            <div id="grandTotalPrintSection" style="background-color: var(--brand-dark); color: white; padding: 20px; box-shadow: 0 -4px 10px rgba(0,0,0,0.1);">
+                <div style="font-weight: 600; font-size: 1rem; text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 12px;">Materials To Order</div>
+                
+                <div id="materialGroupsContainer" style="margin-bottom: 5px;">
+                    <div style="color: #cbd5e1; font-size: 0.85rem; text-align: center; padding: 10px;">Awaiting items...</div>
                 </div>
             </div>
-            
-            <div class="section-half">
-                <div class="row-title">Divided Total Inches</div>
-                <div class="total-value-container">
-                    <div class="total-number" id="dividedTotalInchesDisplay" aria-live="polite">0</div>
-                    <div class="total-unit" aria-hidden="true">in</div>
-                </div>
-            </div>
-        </div>
+        </main>
 
-        <div class="toolbar">
-            <button class="action-btn" id="clearBtn" aria-label="Clear all inputs">
-                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 6h18"></path><path d="M19 6v14c0 1-1 2-2 2H7c-1 0-2-1-2-2V6"></path><path d="M8 6V4c0-1 1-2 2-2h4c1 0 2 1 2 2v2"></path></svg>
-                Clear
-            </button>
-            <button class="action-btn btn-copy" id="copyBtn" aria-label="Copy result to clipboard">
-                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path></svg>
-                Copy Result
-            </button>
-        </div>
+    </div>
 
-    </main>
-
-    <div id="toast" class="toast" role="alert">Result copied to clipboard!</div>
+    <div id="toast" class="toast" role="alert">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#10b981" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"></polyline></svg>
+        <span id="toastMsg">Action Completed!</span>
+    </div>
 
     <script>
-        // DOM Elements
+        // --- Helper Functions ---
+        function roundToTwo(num) {
+            return Math.round((num + Number.EPSILON) * 100) / 100;
+        }
+
+        function sanitizeInput(val) {
+            const parsed = parseFloat(val);
+            return (isNaN(parsed) || parsed < 0) ? 0 : parsed;
+        }
+
+        function showToast(message) {
+            const toast = document.getElementById('toast');
+            const toastMsg = document.getElementById('toastMsg');
+            toastMsg.textContent = message;
+            toast.classList.add('show');
+            setTimeout(() => {
+                toast.classList.remove('show');
+            }, 3000);
+        }
+
+        // --- Original Calc Logic ---
         const feetInput = document.getElementById('feetInput');
         const inchesInput = document.getElementById('inchesInput');
         const totalInchesInput = document.getElementById('totalInchesInput');
@@ -444,64 +1120,30 @@
         const resultFeetDisplay = document.getElementById('resultFeetDisplay');
         const resultInchesDisplay = document.getElementById('resultInchesDisplay');
         const dividedTotalInchesDisplay = document.getElementById('dividedTotalInchesDisplay');
-        
-        const clearBtn = document.getElementById('clearBtn');
-        const copyBtn = document.getElementById('copyBtn');
-        const toast = document.getElementById('toast');
-        const installAppBtn = document.getElementById('installAppBtn');
 
-        // UX: Auto-select text on click
-        [feetInput, inchesInput, totalInchesInput, divideInput].forEach(input => {
-            input.addEventListener('focus', function() {
-                this.select();
-            });
-        });
-
-        // Rounding helper to prevent floating point math errors (e.g., 3.0000000004)
-        function roundToTwo(num) {
-            return Math.round((num + Number.EPSILON) * 100) / 100;
-        }
-
-        // Math Sanitizer: Prevent negative inputs gracefully
-        function sanitizeInput(val) {
-            const parsed = parseFloat(val);
-            return (isNaN(parsed) || parsed < 0) ? 0 : parsed;
-        }
-
-        // Calculate going left-to-right
         function calculateFromFeet() {
             const feet = sanitizeInput(feetInput.value);
             const inches = sanitizeInput(inchesInput.value);
-            
             const totalInches = (feet * 12) + inches;
-            
             totalInchesInput.value = Number.isInteger(totalInches) ? totalInches : roundToTwo(totalInches);
             calculateDivided(totalInches);
         }
 
-        // Calculate going right-to-left
         function calculateFromTotal() {
             const totalInches = sanitizeInput(totalInchesInput.value);
-            
             const feet = Math.floor(totalInches / 12);
             const remainingInches = totalInches % 12;
-
             feetInput.value = feet;
             inchesInput.value = Number.isInteger(remainingInches) ? remainingInches : roundToTwo(remainingInches);
-
             calculateDivided(totalInches);
         }
 
-        // Handle the bottom division
         function calculateDivided(totalInches) {
             const divisor = parseFloat(divideInput.value);
-
             if (divisor && divisor > 0) {
                 const dividedInches = totalInches / divisor;
-                
                 const resultFeet = Math.floor(dividedInches / 12);
                 const resultRemainingInches = dividedInches % 12;
-
                 resultFeetDisplay.value = resultFeet;
                 resultInchesDisplay.value = Number.isInteger(resultRemainingInches) ? resultRemainingInches : roundToTwo(resultRemainingInches);
                 dividedTotalInchesDisplay.textContent = Number.isInteger(dividedInches) ? dividedInches : roundToTwo(dividedInches);
@@ -512,8 +1154,7 @@
             }
         }
 
-        // Action: Clear All
-        clearBtn.addEventListener('click', () => {
+        document.getElementById('clearBtn').addEventListener('click', () => {
             feetInput.value = '';
             inchesInput.value = '';
             totalInchesInput.value = '';
@@ -522,15 +1163,21 @@
             feetInput.focus(); 
         });
 
-        // Action: Copy Result safely
-        async function copyToClipboard(text) {
+        document.getElementById('copyBtn').addEventListener('click', async () => {
+            const feet = resultFeetDisplay.value || 0;
+            const inches = resultInchesDisplay.value || 0;
+            const total = dividedTotalInchesDisplay.textContent || 0;
+            const divisor = parseFloat(divideInput.value);
+            let textToCopy = divisor > 0 
+                ? `Divided Result: ${feet} ft ${inches} in (Total: ${total} in)`
+                : `Measurement: ${feetInput.value || 0} ft ${inchesInput.value || 0} in (Total: ${totalInchesInput.value || 0} in)`;
+
             try {
                 if (navigator.clipboard && window.isSecureContext) {
-                    await navigator.clipboard.writeText(text);
+                    await navigator.clipboard.writeText(textToCopy);
                 } else {
-                    // Fallback for older browsers
                     const textArea = document.createElement("textarea");
-                    textArea.value = text;
+                    textArea.value = textToCopy;
                     textArea.style.position = "absolute";
                     textArea.style.left = "-999999px";
                     document.body.prepend(textArea);
@@ -538,114 +1185,503 @@
                     document.execCommand('copy');
                     textArea.remove();
                 }
-                
-                // Show Toast Notification
-                toast.classList.add('show');
-                setTimeout(() => {
-                    toast.classList.remove('show');
-                }, 3000);
+                showToast("Result copied!");
             } catch (err) {
                 console.error('Failed to copy!', err);
             }
-        }
-
-        copyBtn.addEventListener('click', () => {
-            const feet = resultFeetDisplay.value || 0;
-            const inches = resultInchesDisplay.value || 0;
-            const total = dividedTotalInchesDisplay.textContent || 0;
-            const divisor = parseFloat(divideInput.value);
-            
-            let textToCopy = '';
-            if (divisor > 0) {
-                textToCopy = `Divided Result: ${feet} ft ${inches} in (Total: ${total} in)`;
-            } else {
-                textToCopy = `Measurement: ${feetInput.value || 0} ft ${inchesInput.value || 0} in (Total: ${totalInchesInput.value || 0} in)`;
-            }
-
-            copyToClipboard(textToCopy);
         });
 
-        // Event listeners for calculations
         feetInput.addEventListener('input', calculateFromFeet);
         inchesInput.addEventListener('input', calculateFromFeet);
         totalInchesInput.addEventListener('input', calculateFromTotal);
-        
         divideInput.addEventListener('input', () => {
-            const currentTotal = sanitizeInput(totalInchesInput.value);
-            calculateDivided(currentTotal);
+            calculateDivided(sanitizeInput(totalInchesInput.value));
         });
-        
-        // Run once on load
-        calculateFromFeet();
 
-        // --- PWA & App Install Logic ---
+        // --- Trim Estimator Shared State (With robust LocalStorage) ---
+        let projectTally = [];
+        let trimStickLengths = {}; 
         
-        // 1. Inject Manifest
-        const manifest = {
-            name: "SimplyDoors Calc",
-            short_name: "SD Calc",
-            description: "SimplyDoors Measurement Calculator",
-            start_url: ".",
-            display: "standalone",
-            background_color: "#0f172a",
-            theme_color: "#0f172a",
-            icons: [{
-                src: "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Crect width='100' height='100' rx='20' fill='%230f172a'/%3E%3Ctext x='50' y='65' font-family='Arial' font-size='50' font-weight='bold' fill='%23059669' text-anchor='middle'%3ESD%3C/text%3E%3C/svg%3E",
-                sizes: "192x192",
-                type: "image/svg+xml",
-                purpose: "any maskable"
-            }]
+        try {
+            const storedTally = localStorage.getItem('sd_projectTally');
+            if(storedTally) projectTally = JSON.parse(storedTally);
+            
+            const storedLengths = localStorage.getItem('sd_trimStickLengths');
+            if(storedLengths) trimStickLengths = JSON.parse(storedLengths);
+        } catch (e) {
+            console.warn("Could not load from local storage. Privacy settings may be blocking it.");
+        }
+        
+        let currentWindowTrimData = { exactLF: 0, recLF: 0, exactInches: 0, recInches: 0, trimName: '', baseDesc: '' };
+        let currentDoorTrimData = { exactLF: 0, recLF: 0, exactInches: 0, recInches: 0, trimName: '', baseDesc: '' };
+        let currentBaseboardData = { exactLF: 0, recLF: 0, exactInches: 0, recInches: 0, trimName: '', baseDesc: '' };
+        
+        function saveState() {
+            try {
+                localStorage.setItem('sd_projectTally', JSON.stringify(projectTally));
+                localStorage.setItem('sd_trimStickLengths', JSON.stringify(trimStickLengths));
+            } catch(e) {
+                // Ignore if storage is disabled
+            }
+        }
+
+        // --- WINDOW Trim Logic ---
+        const winQtyInput = document.getElementById('winQty');
+        const blueprintCodeWindow = document.getElementById('blueprintCodeWindow');
+        const winLabelInput = document.getElementById('winLabel');
+        const winWidthFeet = document.getElementById('winWidthFeet');
+        const winWidthInches = document.getElementById('winWidthInches');
+        const winHeightFeet = document.getElementById('winHeightFeet');
+        const winHeightInches = document.getElementById('winHeightInches');
+        const winTrimSizeSelect = document.getElementById('winTrimSizeSelect');
+        const includeReturnCheckbox = document.getElementById('includeReturnCheckbox');
+        
+        const winExactLfDisplay = document.getElementById('winExactLfDisplay');
+        const winExactInchesDisplay = document.getElementById('winExactInchesDisplay');
+        const winRecLfDisplay = document.getElementById('winRecLfDisplay');
+        const winRecInchesDisplay = document.getElementById('winRecInchesDisplay');
+
+        blueprintCodeWindow.addEventListener('input', function() {
+            let val = this.value.replace(/\D/g, '');
+            this.value = val;
+            if (val.length === 4) {
+                winWidthFeet.value = parseInt(val[0]);
+                winWidthInches.value = parseInt(val[1]);
+                winHeightFeet.value = parseInt(val[2]);
+                winHeightInches.value = parseInt(val[3]);
+                calculateWindowTrim();
+                setTimeout(() => { 
+                    this.value = ''; 
+                    document.getElementById('addToTallyBtnWindow').focus();
+                }, 200);
+            }
+        });
+
+        function calculateWindowTrim() {
+            let qty = parseInt(winQtyInput.value);
+            if (isNaN(qty) || qty < 1) qty = 1;
+
+            const wF = sanitizeInput(winWidthFeet.value);
+            const wI = sanitizeInput(winWidthInches.value);
+            const hF = sanitizeInput(winHeightFeet.value);
+            const hI = sanitizeInput(winHeightInches.value);
+            const trimWidth = parseFloat(winTrimSizeSelect.value);
+            const includeReturn = includeReturnCheckbox.checked;
+
+            const totalWidthInches = (wF * 12) + wI;
+            const totalHeightInches = (hF * 12) + hI;
+            
+            const innerPerimeter = (totalWidthInches * 2) + (totalHeightInches * 2);
+            const cornerMaterial = trimWidth > 0 ? (trimWidth * 4) : 0; 
+
+            let singleTrimInches = innerPerimeter + cornerMaterial;
+            if (includeReturn) singleTrimInches += innerPerimeter; 
+
+            const totalTrimInches = singleTrimInches * qty;
+
+            const exactLF = totalTrimInches / 12;
+            const recLF = exactLF * 1.10;
+            const recInches = totalTrimInches * 1.10;
+
+            winExactLfDisplay.textContent = roundToTwo(exactLF);
+            winExactInchesDisplay.textContent = roundToTwo(totalTrimInches) + " in";
+            
+            const roundedRecLF = exactLF > 0 ? Math.ceil(recLF) : 0;
+            winRecLfDisplay.textContent = roundedRecLF; 
+            winRecInchesDisplay.textContent = exactLF > 0 ? Math.ceil(recInches) + " in" : "0 in";
+
+            let trimName = winTrimSizeSelect.options[winTrimSizeSelect.selectedIndex].text;
+            const sizeStr = `${wF}'${wI}" x ${hF}'${hI}"`;
+            const returnStr = includeReturn ? " + Return" : "";
+            const qtyStr = qty > 1 ? `${qty}x ` : "";
+            
+            currentWindowTrimData = {
+                exactLF: exactLF,
+                recLF: roundedRecLF,
+                exactInches: totalTrimInches,
+                recInches: recInches,
+                trimName: trimName,
+                baseDesc: `${qtyStr}Window: ${sizeStr} (${trimName}${returnStr})`
+            };
+        }
+
+        // --- DOOR Trim Logic ---
+        const doorQtyInput = document.getElementById('doorQty');
+        const blueprintCodeDoor = document.getElementById('blueprintCodeDoor');
+        const doorLabelInput = document.getElementById('doorLabel');
+        const doorWidthFeet = document.getElementById('doorWidthFeet');
+        const doorWidthInches = document.getElementById('doorWidthInches');
+        const doorHeightFeet = document.getElementById('doorHeightFeet');
+        const doorHeightInches = document.getElementById('doorHeightInches');
+        const doorTrimSizeSelect = document.getElementById('doorTrimSizeSelect');
+        const doorSidesSelect = document.getElementById('doorSidesSelect');
+        
+        const doorExactLfDisplay = document.getElementById('doorExactLfDisplay');
+        const doorExactInchesDisplay = document.getElementById('doorExactInchesDisplay');
+        const doorRecLfDisplay = document.getElementById('doorRecLfDisplay');
+        const doorRecInchesDisplay = document.getElementById('doorRecInchesDisplay');
+
+        blueprintCodeDoor.addEventListener('input', function() {
+            let val = this.value.replace(/\D/g, '');
+            this.value = val;
+            if (val.length === 4) {
+                doorWidthFeet.value = parseInt(val[0]);
+                doorWidthInches.value = parseInt(val[1]);
+                doorHeightFeet.value = parseInt(val[2]);
+                doorHeightInches.value = parseInt(val[3]);
+                calculateDoorTrim();
+                setTimeout(() => { 
+                    this.value = ''; 
+                    document.getElementById('addToTallyBtnDoor').focus();
+                }, 200);
+            }
+        });
+
+        function calculateDoorTrim() {
+            let qty = parseInt(doorQtyInput.value);
+            if (isNaN(qty) || qty < 1) qty = 1;
+
+            const wF = sanitizeInput(doorWidthFeet.value);
+            const wI = sanitizeInput(doorWidthInches.value);
+            const hF = sanitizeInput(doorHeightFeet.value);
+            const hI = sanitizeInput(doorHeightInches.value);
+            const trimWidth = parseFloat(doorTrimSizeSelect.value);
+            const sidesMultiplier = parseInt(doorSidesSelect.value);
+
+            const totalWidthInches = (wF * 12) + wI;
+            const totalHeightInches = (hF * 12) + hI;
+            
+            const innerPerimeter = totalWidthInches + (totalHeightInches * 2);
+            const cornerMaterial = trimWidth > 0 ? (trimWidth * 2) : 0; 
+
+            let singleTrimInches = (innerPerimeter + cornerMaterial) * sidesMultiplier;
+            let totalTrimInches = singleTrimInches * qty;
+
+            const exactLF = totalTrimInches / 12;
+            const recLF = exactLF * 1.10;
+            const recInches = totalTrimInches * 1.10;
+
+            doorExactLfDisplay.textContent = roundToTwo(exactLF);
+            doorExactInchesDisplay.textContent = roundToTwo(totalTrimInches) + " in";
+            
+            const roundedRecLF = exactLF > 0 ? Math.ceil(recLF) : 0;
+            doorRecLfDisplay.textContent = roundedRecLF; 
+            doorRecInchesDisplay.textContent = exactLF > 0 ? Math.ceil(recInches) + " in" : "0 in";
+
+            let trimName = doorTrimSizeSelect.options[doorTrimSizeSelect.selectedIndex].text;
+            const sizeStr = `${wF}'${wI}" x ${hF}'${hI}"`;
+            const sidesStr = sidesMultiplier === 2 ? " (Int - Both Sides)" : " (Ext - 1 Side)";
+            const qtyStr = qty > 1 ? `${qty}x ` : "";
+            
+            currentDoorTrimData = {
+                exactLF: exactLF,
+                recLF: roundedRecLF,
+                exactInches: totalTrimInches,
+                recInches: recInches,
+                trimName: trimName,
+                baseDesc: `${qtyStr}Door: ${sizeStr} - ${trimName}${sidesStr}`
+            };
+        }
+
+        // --- BASEBOARD Logic ---
+        const baseLabelInput = document.getElementById('baseLabel');
+        const baseFeetInput = document.getElementById('baseFeet');
+        const baseInchesInput = document.getElementById('baseInches');
+        const baseTotalInchesInput = document.getElementById('baseTotalInches');
+        const baseTrimSelect = document.getElementById('baseTrimSelect');
+        
+        const baseExactLfDisplay = document.getElementById('baseExactLfDisplay');
+        const baseExactInchesDisplay = document.getElementById('baseExactInchesDisplay');
+        const baseRecLfDisplay = document.getElementById('baseRecLfDisplay');
+        const baseRecInchesDisplay = document.getElementById('baseRecInchesDisplay');
+
+        function calculateBaseboardFromFeet() {
+            const f = sanitizeInput(baseFeetInput.value);
+            const i = sanitizeInput(baseInchesInput.value);
+            const total = (f * 12) + i;
+            
+            baseTotalInchesInput.value = Number.isInteger(total) ? total : roundToTwo(total);
+            calculateBaseboard();
+        }
+
+        function calculateBaseboardFromTotal() {
+            const total = sanitizeInput(baseTotalInchesInput.value);
+            const f = Math.floor(total / 12);
+            const i = total % 12;
+            
+            baseFeetInput.value = f;
+            baseInchesInput.value = Number.isInteger(i) ? i : roundToTwo(i);
+            calculateBaseboard();
+        }
+
+        function calculateBaseboard() {
+            const totalTrimInches = sanitizeInput(baseTotalInchesInput.value);
+
+            const exactLF = totalTrimInches / 12;
+            const recLF = exactLF * 1.10;
+            const recInches = totalTrimInches * 1.10;
+
+            baseExactLfDisplay.textContent = roundToTwo(exactLF);
+            baseExactInchesDisplay.textContent = roundToTwo(totalTrimInches) + " in";
+            
+            const roundedRecLF = exactLF > 0 ? Math.ceil(recLF) : 0;
+            baseRecLfDisplay.textContent = roundedRecLF; 
+            baseRecInchesDisplay.textContent = exactLF > 0 ? Math.ceil(recInches) + " in" : "0 in";
+
+            let trimName = baseTrimSelect.options[baseTrimSelect.selectedIndex].text;
+            
+            const f = sanitizeInput(baseFeetInput.value);
+            const i = sanitizeInput(baseInchesInput.value);
+            const sizeStr = `${f}'${i}"`;
+            
+            currentBaseboardData = {
+                exactLF: exactLF,
+                recLF: roundedRecLF,
+                exactInches: totalTrimInches,
+                recInches: recInches,
+                trimName: trimName,
+                baseDesc: `Baseboard: ${sizeStr} - ${trimName}`
+            };
+        }
+
+
+        // --- Tally & Grouped Materials Management ---
+        window.updateStickLength = function(trimType, value) {
+            trimStickLengths[trimType] = parseInt(value);
+            saveState();
+            renderTally();
         };
-        const manifestBlob = new Blob([JSON.stringify(manifest)], {type: 'application/json'});
-        document.getElementById('manifest-placeholder').href = URL.createObjectURL(manifestBlob);
 
-        // 2. Inject Service Worker for Offline Capability
-        if ('serviceWorker' in navigator) {
-            const swCode = `
-                const CACHE_NAME = 'sd-calc-v1';
-                self.addEventListener('install', (e) => {
-                    self.skipWaiting();
-                });
-                self.addEventListener('activate', (e) => {
-                    e.waitUntil(clients.claim());
-                });
-                self.addEventListener('fetch', (e) => {
-                    e.respondWith(
-                        fetch(e.request).catch(() => new Response('Offline Mode Active'))
-                    );
-                });
-            `;
-            const swBlob = new Blob([swCode], {type: 'application/javascript'});
-            navigator.serviceWorker.register(URL.createObjectURL(swBlob)).catch(err => console.log('SW Registration Failed:', err));
+        function renderTally() {
+            const container = document.getElementById('tallyListContainer');
+            const materialsContainer = document.getElementById('materialGroupsContainer');
+
+            if (projectTally.length === 0) {
+                container.innerHTML = `<div style="padding: 30px 20px; text-align: center; color: var(--text-muted); font-size: 0.9rem;" id="emptyTallyMsg">No items added yet.<br>Enter dimensions to the left and click "Add to Project Tally".</div>`;
+                materialsContainer.innerHTML = `<div style="color: #cbd5e1; font-size: 0.85rem; text-align: center; padding: 10px;">Awaiting items...</div>`;
+                return;
+            }
+
+            // 1. Render the main tally list
+            let html = '';
+            let groupedMaterials = {};
+
+            projectTally.forEach((item, index) => {
+                if (!groupedMaterials[item.trimName]) {
+                    groupedMaterials[item.trimName] = { exactInches: 0 };
+                }
+                groupedMaterials[item.trimName].exactInches += item.exactInches;
+                
+                html += `
+                    <div class="tally-item">
+                        <div>
+                            <div class="tally-details">${item.description}</div>
+                            <div class="tally-subtext">Exact: ${roundToTwo(item.exactLF)} LF (${roundToTwo(item.exactInches)} in)</div>
+                        </div>
+                        <div style="display: flex; align-items: center;">
+                            <div class="tally-values">
+                                <div class="tally-exact">${item.recLF} LF</div>
+                                <div class="tally-subtext" style="text-align: right;">${Math.ceil(item.recInches)} in</div>
+                            </div>
+                            <button class="btn-remove" onclick="removeTallyItem(${index})" aria-label="Remove item">✕</button>
+                        </div>
+                    </div>
+                `;
+            });
+            container.innerHTML = html;
+            
+            // 2. Render the Grouped Materials "To Order" section
+            let materialsHtml = '';
+            
+            for (const [trimType, data] of Object.entries(groupedMaterials)) {
+                
+                const groupExactLF = data.exactInches / 12;
+                const groupRecLF = Math.ceil(groupExactLF * 1.10);
+                
+                if (!trimStickLengths[trimType]) {
+                    if (trimType.includes("CASE")) {
+                        trimStickLengths[trimType] = 14; 
+                    } else {
+                        trimStickLengths[trimType] = 17; 
+                    }
+                    saveState();
+                }
+                
+                const sLen = trimStickLengths[trimType];
+                const sticksNeeded = groupRecLF > 0 ? Math.ceil(groupRecLF / sLen) : 0;
+                
+                // Make the trim name safe for HTML attribute insertion
+                const safeTrimType = trimType.replace(/"/g, '&quot;');
+
+                materialsHtml += `
+                    <div class="material-group">
+                        <div style="flex: 1; min-width: 150px;">
+                            <div class="mg-title">${trimType}</div>
+                            <div class="mg-stats">
+                                Exact Needed: ${roundToTwo(groupExactLF)} LF<br>
+                                Recommended (+10%): <strong style="color: white;">${groupRecLF} LF</strong>
+                            </div>
+                        </div>
+                        <div class="mg-order">
+                            <div style="display: flex; flex-direction: column; gap: 4px;">
+                                <select class="trim-select" style="width: auto; background: rgba(255,255,255,0.1); color: white; border-color: rgba(255,255,255,0.3); padding: 6px; font-size: 0.85rem;" data-trim="${safeTrimType}" onchange="updateStickLength(this.dataset.trim, this.value)">
+                                    <option value="8" ${sLen === 8 ? 'selected' : ''}>8' Sticks</option>
+                                    <option value="10" ${sLen === 10 ? 'selected' : ''}>10' Sticks</option>
+                                    <option value="12" ${sLen === 12 ? 'selected' : ''}>12' Sticks</option>
+                                    <option value="14" ${sLen === 14 ? 'selected' : ''}>14' Sticks</option>
+                                    <option value="16" ${sLen === 16 ? 'selected' : ''}>16' Sticks</option>
+                                    <option value="17" ${sLen === 17 ? 'selected' : ''}>17' Sticks</option>
+                                </select>
+                            </div>
+                            <div style="text-align: right; min-width: 70px;">
+                                <div style="font-size: 0.7rem; color: #cbd5e1; text-transform: uppercase;">Order</div>
+                                <div style="font-size: 1.5rem; font-weight: bold; color: var(--brand-accent); line-height: 1;">
+                                    ${sticksNeeded} <span style="font-size: 0.8rem; color: white;">Sticks</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                `;
+            }
+            materialsContainer.innerHTML = materialsHtml;
+            
+            // Auto-scroll tally to bottom when new items are added
+            const scrollArea = document.querySelector('.tally-scroll-area');
+            scrollArea.scrollTop = scrollArea.scrollHeight;
         }
 
-        // 3. Handle Install Prompts
-        let deferredPrompt;
-        const isIOS = /iPad|iPhone|iPod/.test(navigator.userAgent) && !window.MSStream;
-        
-        if (isIOS) {
-            installAppBtn.style.display = 'block';
-            installAppBtn.addEventListener('click', () => {
-                alert('To install the SimplyDoors Calc app:\n\n1. Tap the Share icon at the bottom of Safari.\n2. Scroll down and tap "Add to Home Screen".');
-            });
-        }
+        window.removeTallyItem = function(index) {
+            projectTally.splice(index, 1);
+            saveState();
+            renderTally();
+        };
 
-        window.addEventListener('beforeinstallprompt', (e) => {
-            e.preventDefault();
-            deferredPrompt = e;
-            installAppBtn.style.display = 'block';
-
-            installAppBtn.addEventListener('click', async () => {
-                installAppBtn.style.display = 'none';
-                deferredPrompt.prompt();
-                const { outcome } = await deferredPrompt.userChoice;
-                deferredPrompt = null;
-            });
+        document.getElementById('addToTallyBtnWindow').addEventListener('click', () => {
+            if (currentWindowTrimData.exactLF > 0) {
+                const label = winLabelInput.value.trim();
+                const finalDesc = label ? `<strong>${label}</strong> - ${currentWindowTrimData.baseDesc}` : currentWindowTrimData.baseDesc;
+                
+                projectTally.push({ 
+                    ...currentWindowTrimData,
+                    description: finalDesc
+                });
+                
+                saveState();
+                renderTally();
+                showToast("Added Window to Tally!");
+                
+                winLabelInput.value = ''; 
+                winQtyInput.value = '1';
+                calculateWindowTrim();
+            } else {
+                showToast("Please enter dimensions first.");
+            }
         });
 
-        window.addEventListener('appinstalled', () => {
-            installAppBtn.style.display = 'none';
+        document.getElementById('addToTallyBtnDoor').addEventListener('click', () => {
+            if (currentDoorTrimData.exactLF > 0) {
+                const label = doorLabelInput.value.trim();
+                const finalDesc = label ? `<strong>${label}</strong> - ${currentDoorTrimData.baseDesc}` : currentDoorTrimData.baseDesc;
+
+                projectTally.push({ 
+                    ...currentDoorTrimData,
+                    description: finalDesc
+                });
+                
+                saveState();
+                renderTally();
+                showToast("Added Door to Tally!");
+                
+                doorLabelInput.value = '';
+                doorQtyInput.value = '1';
+                calculateDoorTrim();
+            } else {
+                showToast("Please enter dimensions first.");
+            }
         });
+
+        document.getElementById('addToTallyBtnBase').addEventListener('click', () => {
+            if (currentBaseboardData.exactLF > 0) {
+                const label = baseLabelInput.value.trim();
+                const finalDesc = label ? `<strong>${label}</strong> - ${currentBaseboardData.baseDesc}` : currentBaseboardData.baseDesc;
+
+                projectTally.push({ 
+                    ...currentBaseboardData,
+                    description: finalDesc
+                });
+                
+                saveState();
+                renderTally();
+                showToast("Added Baseboard to Tally!");
+                
+                baseLabelInput.value = '';
+                baseFeetInput.value = '0';
+                baseInchesInput.value = '0';
+                calculateBaseboardFromFeet(); 
+            } else {
+                showToast("Please enter dimensions first.");
+            }
+        });
+
+        document.getElementById('clearTallyBtn').addEventListener('click', () => {
+            if (projectTally.length > 0 && confirm('Are you sure you want to clear the entire project tally?')) {
+                projectTally = [];
+                saveState();
+                renderTally();
+                showToast("Tally cleared.");
+            }
+        });
+
+        document.getElementById('printTallyBtn').addEventListener('click', () => {
+            if (projectTally.length === 0) {
+                alert('Add some items to the tally before printing!');
+                return;
+            }
+            window.print();
+        });
+
+        // Event listeners for Window Estimator
+        winQtyInput.addEventListener('input', calculateWindowTrim);
+        winWidthFeet.addEventListener('input', calculateWindowTrim);
+        winWidthInches.addEventListener('input', calculateWindowTrim);
+        winHeightFeet.addEventListener('input', calculateWindowTrim);
+        winHeightInches.addEventListener('input', calculateWindowTrim);
+        winTrimSizeSelect.addEventListener('change', calculateWindowTrim);
+        includeReturnCheckbox.addEventListener('change', calculateWindowTrim);
+
+        // Event listeners for Door Estimator
+        doorQtyInput.addEventListener('input', calculateDoorTrim);
+        doorWidthFeet.addEventListener('input', calculateDoorTrim);
+        doorWidthInches.addEventListener('input', calculateDoorTrim);
+        doorHeightFeet.addEventListener('input', calculateDoorTrim);
+        doorHeightInches.addEventListener('input', calculateDoorTrim);
+        doorTrimSizeSelect.addEventListener('change', calculateDoorTrim);
+        doorSidesSelect.addEventListener('change', calculateDoorTrim);
+
+        // Event listeners for Baseboard Estimator
+        baseFeetInput.addEventListener('input', calculateBaseboardFromFeet);
+        baseInchesInput.addEventListener('input', calculateBaseboardFromFeet);
+        baseTotalInchesInput.addEventListener('input', calculateBaseboardFromTotal);
+        baseTrimSelect.addEventListener('change', calculateBaseboardFromFeet);
+
+        // UX: Auto-select text on click for all inputs
+        const allInputs = [
+            feetInput, inchesInput, totalInchesInput, divideInput, 
+            winQtyInput, winWidthFeet, winWidthInches, winHeightFeet, winHeightInches, blueprintCodeWindow,
+            doorQtyInput, doorWidthFeet, doorWidthInches, doorHeightFeet, doorHeightInches, blueprintCodeDoor,
+            baseFeetInput, baseInchesInput, baseTotalInchesInput,
+            winLabelInput, doorLabelInput, baseLabelInput
+        ];
+        allInputs.forEach(input => {
+            input.addEventListener('focus', function() { this.select(); });
+        });
+
+        // Initial Calculations & Load State
+        calculateFromFeet();
+        calculateWindowTrim();
+        calculateDoorTrim();
+        calculateBaseboardFromFeet();
+        renderTally(); 
 
     </script>
 </body>
